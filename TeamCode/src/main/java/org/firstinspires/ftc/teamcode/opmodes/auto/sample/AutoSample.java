@@ -75,7 +75,7 @@ public final class AutoSample extends LinearOpMode {
                                 // score spec position for upperslides to go down
                                 ),
                                 // Use motion profiling for smooth slide retraction
-                                MotionProfiledSlideCommand.upperSlideOnly(upSlide, 0.0).toAction());
+                                upperSlideCommands.slidePos0());
         }
 
         // --- Helper for repeated front-for-drop sequence ---
@@ -147,8 +147,7 @@ public final class AutoSample extends LinearOpMode {
                                                                 .strafeToSplineHeading(pickupPos.pos, pickupPos.heading)
                                                                 .build(),
                                                 // Use motion profiling for smooth lower slide extension
-                                                MotionProfiledSlideCommand.lowerSlideOnly(lowSlide,
-                                                                lowerslideExtendLength).toAction()),
+                                                lowerSlideCommands.setSlidePos(lowerslideExtendLength)),
 
                                 new WaitCommand(ConfigVariables.AutoTesting.Y_PICKUPDELAY).toAction(),
                                 adjustSequence(),
