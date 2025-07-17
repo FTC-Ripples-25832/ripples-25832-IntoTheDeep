@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPaths.SCORE;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.base.ActionCommand;
@@ -33,18 +34,25 @@ import org.firstinspires.ftc.teamcode.commands.vision.DistanceAdjustLUTThetaR;
 import org.firstinspires.ftc.teamcode.commands.vision.DistanceAdjustLUTX;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.sensors.ColorSensorImpl;
-// import org.firstinspires.ftc.teamcode.sensors.limelight.LimeLightImageTools;
+import org.firstinspires.ftc.teamcode.sensors.limelight.LimeLightImageTools;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
 import org.firstinspires.ftc.teamcode.utils.ClawController;
 import org.firstinspires.ftc.teamcode.utils.GamepadController;
 import org.firstinspires.ftc.teamcode.utils.GamepadController.ButtonType;
+import org.firstinspires.ftc.teamcode.utils.RobotStateStore;
+import org.firstinspires.ftc.teamcode.utils.TelemetryPacket;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import org.firstinspires.ftc.teamcode.utils.hardware.BulkReadManager;
 
+import java.util.List;
+
 @TeleOp(group = "TeleOp", name = "A. Teleop")
 public class Teleop extends LinearOpMode {
+
+    private static List<LynxModule> allHubs = null;
+    private final long starttime = System.currentTimeMillis();
 
     private MecanumDrive drive;
 
@@ -71,6 +79,17 @@ public class Teleop extends LinearOpMode {
     private MecanumDriveCommand mecanumDriveCommand;
 
     private ColorSensorImpl colorSensor;
+    private long loopCount = 0;
+    private long lastloop = System.currentTimeMillis();
+
+    public static void initializeBulkReads(HardwareMap hardwareMap) {
+        if (allHubs == null) {
+            allHubs = hardwareMap.getAll(LynxModule.class);
+            for (LynxModule hub : allHubs) {
+                hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            }
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -88,18 +107,14 @@ public class Teleop extends LinearOpMode {
         scheduler.schedule(new ActionCommand(upslideActions.front()));
         scheduler.schedule(new ActionCommand(lowslideActions.up()));
 
-        // Schedule slide PID update commands for motion profiling support
-        scheduler.schedule(new LowerSlideUpdatePID(lowSlide));
-        scheduler.schedule(new UpperSlideUpdatePID(upSlide));
         if (ConfigVariables.General.WITH_STATESAVE) {
-            scheduler.schedule(new ReadRobotStateCommand(drive, lowSlide, upSlide));
+            RobotStateStore.loadSlides(lowSlide, upSlide);
         }
         while (!isStopRequested() && !opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
             scheduler.run(packet);
-            // gamepad1Controller.update();
-            // gamepad2Controller.update();
-            telemetry.update();
+//            gamepad1Controller.update();
+//            gamepad2Controller.update();
         }
 
         waitForStart();
@@ -115,6 +130,8 @@ public class Teleop extends LinearOpMode {
             return;
 
         while (opModeIsActive() && !isStopRequested()) {
+            loopCount += 1;
+            long timestamp = System.currentTimeMillis();
             // PERFORMANCE OPTIMIZATION: Update bulk reads once per loop
             bulkReadManager.updateBulkRead();
 
@@ -123,31 +140,33 @@ public class Teleop extends LinearOpMode {
 
             gamepad1Controller.update();
             gamepad2Controller.update();
-            telemetry.update();
+            lowSlide.updatePID();
+            upSlide.updatePID();
+
+            if (loopCount % 20 == 0) {
+                telemetry.addData("looptimems", timestamp - lastloop);
+                telemetry.addData("avglooptimems", (timestamp - starttime) / (double) loopCount);
+                telemetry.update();
+            }
+
 
             // PERFORMANCE OPTIMIZATION: PID updates moved to command system
             // Manual PID calls removed to prevent double updates
             // lowSlide.updatePID();
             // upSlide.updatePID();
 
-            if (System.currentTimeMillis()
-                    - lastDashboardUpdateTime >= ConfigVariables.General.DASHBOARD_UPDATE_INTERVAL_MS) {
+            if (ConfigVariables.General.DEBUG_MODE && timestamp - lastDashboardUpdateTime >= ConfigVariables.General.DASHBOARD_UPDATE_INTERVAL_MS) {
                 packet.put("gamepad1/NoOperationTimems", gamepad1Controller.getNoOperationTime());
                 packet.put("gamepad2/NoOperationTimems", gamepad2Controller.getNoOperationTime());
-                packet.put("colorsensor/catched", colorSensor.catched());
+                packet.put("colorsensor/caught", colorSensor.caught());
                 packet.put("colorsensor/cantransfer", colorSensor.canTransfer());
                 dashboard.sendTelemetryPacket(packet);
-                lastDashboardUpdateTime = System.currentTimeMillis();
+                lastDashboardUpdateTime = timestamp;
             }
 
         }
         if (ConfigVariables.General.WITH_STATESAVE) {
-            SaveRobotStateCommand command = new SaveRobotStateCommand(drive, lowSlide, upSlide);
-            TelemetryPacket packet = new TelemetryPacket();
-            command.initialize();
-            command.execute(packet);
-            command.end(false);
-            dashboard.sendTelemetryPacket(packet);
+            RobotStateStore.save(drive.localizer.getPose(), lowSlide.getCurrentPosition(), upSlide.getCurrentPosition());
         }
         cleanup();
     }
@@ -160,7 +179,14 @@ public class Teleop extends LinearOpMode {
     }
 
     private void initializeSubsystems() {
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        if (ConfigVariables.General.WITH_STATESAVE) {
+            drive = new MecanumDrive(hardwareMap, RobotStateStore.getPose());
+            LimeLightImageTools llIt = new LimeLightImageTools(camera.limelight);
+            llIt.setDriverStationStreamSource();
+            llIt.forwardAll();
+        } else {
+            drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        }
 
         // Initialize BulkReadManager for performance optimization
         bulkReadManager = new BulkReadManager(hardwareMap);
@@ -219,23 +245,13 @@ public class Teleop extends LinearOpMode {
         });
         gamepad1Controller.onPressed(ButtonType.X, () -> {
             scheduler.schedule(new ActionCommand(lowslideActions.hover()));
-            scheduler.schedule(new WaitForConditionCommand(
-                    () -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 2500,
-                    new AngleAdjustCommand(lowSlide, camera)));
+            scheduler.schedule(new WaitForConditionCommand(() -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 2500, new AngleAdjustCommand(lowSlide, camera)));
         });
         gamepad1Controller.onPressed(ButtonType.Y, () -> {
-            scheduler.schedule(new WaitForConditionCommand(
-                    () -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 3000,
-                    new SequentialCommandGroup(new CameraUpdateDetectorResult(camera),
-                            new DistanceAdjustLUTThetaR(lowSlide, drive, camera::getTx, camera::getTy,
-                                    camera::getPx,
-                                    camera::getPy, mecanumDriveCommand::disableControl,
-                                    mecanumDriveCommand::enableControl))));
+            scheduler.schedule(new WaitForConditionCommand(() -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 3000, new SequentialCommandGroup(new CameraUpdateDetectorResult(camera), new DistanceAdjustLUTThetaR(lowSlide, drive, camera::getTx, camera::getTy, camera::getPx, camera::getPy, mecanumDriveCommand::disableControl, mecanumDriveCommand::enableControl))));
         });
         gamepad1Controller.onPressed(ButtonType.DPAD_DOWN, () -> { // drop, for testing
-            scheduler.schedule(new SequentialCommandGroup(new ActionCommand(upslideActions.front()),
-                    new WaitCommand(ConfigVariables.UpperSlideVars.FRONT_DELAY),
-                    new ActionCommand(upslideActions.openClaw())));
+            scheduler.schedule(new SequentialCommandGroup(new ActionCommand(upslideActions.front()), new WaitCommand(ConfigVariables.UpperSlideVars.FRONT_DELAY), new ActionCommand(upslideActions.openClaw())));
         });
 
         gamepad1Controller.onPressed(ButtonType.DPAD_LEFT, () -> {
@@ -243,26 +259,23 @@ public class Teleop extends LinearOpMode {
         });
 
         gamepad1Controller.onPressed(ButtonType.DPAD_RIGHT, () -> {
-            scheduler.schedule(new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions));
+            scheduler.schedule(new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions, colorSensor::caughtDefaultTrue));
         });
         gamepad1Controller.onPressed(ButtonType.LEFT_STICK_BUTTON, () -> {
             scheduler.schedule(new SequentialCommandGroup(new ActionCommand((packet) -> {
                 mecanumDriveCommand.disableControl();
                 return false;
-            }), new ActionCommand(drive.actionBuilder(drive.localizer.getPose())
-                    .strafeToLinearHeading(SCORE.pos, SCORE.heading).build()), new ActionCommand((packet) -> {
-                        mecanumDriveCommand.enableControl();
-                        return false;
-                    })));
+            }), new ActionCommand(drive.actionBuilder(drive.localizer.getPose()).strafeToLinearHeading(SCORE.pos, SCORE.heading).build()), new ActionCommand((packet) -> {
+                mecanumDriveCommand.enableControl();
+                return false;
+            })));
         });
     }
 
     private void setupGamepadControls() {
         gamepad1Controller.onPressed(ButtonType.X, () -> {
             scheduler.schedule(new ActionCommand(lowslideActions.hover()));
-            scheduler.schedule(new WaitForConditionCommand(
-                    () -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 2500,
-                    new AngleAdjustCommand(lowSlide, camera)));
+            scheduler.schedule(new WaitForConditionCommand(() -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 2500, new AngleAdjustCommand(lowSlide, camera)));
         });
 
         gamepad1Controller.onPressed(ButtonType.DPAD_UP, () -> {
@@ -280,19 +293,15 @@ public class Teleop extends LinearOpMode {
 
         gamepad1Controller.onPressed(ButtonType.B, () -> {
             scheduler.schedule(new CameraUpdateDetectorResult(camera));
-            scheduler.schedule(new DistanceAdjustLUTX(drive, camera::getTx,
-                    camera::getTy, camera::getPx, camera::getPy,
-                    mecanumDriveCommand::disableControl, mecanumDriveCommand::enableControl));
+            scheduler.schedule(new DistanceAdjustLUTX(drive, camera::getTx, camera::getTy, camera::getPx, camera::getPy, mecanumDriveCommand::disableControl, mecanumDriveCommand::enableControl));
+            // scheduler.schedule(new DistanceAdjustCalculatedY(lowSlide, camera::getDy));
+            // scheduler.schedule(new DistanceAdjustCalculatedX(drive, camera::getDx,
+            // camera::getDy,
+            // mecanumDriveCommand::disableControl, mecanumDriveCommand::enableControl));
         });
 
         gamepad1Controller.onPressed(ButtonType.Y, () -> {
-            scheduler.schedule(new WaitForConditionCommand(
-                    () -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 3000,
-                    new SequentialCommandGroup(new CameraUpdateDetectorResult(camera),
-                            new DistanceAdjustLUTThetaR(lowSlide, drive, camera::getTx, camera::getTy,
-                                    camera::getPx,
-                                    camera::getPy, mecanumDriveCommand::disableControl,
-                                    mecanumDriveCommand::enableControl))));
+            scheduler.schedule(new WaitForConditionCommand(() -> gamepad1Controller.getNoOperationTime() > ConfigVariables.Camera.CAMERA_DELAY * 1000, 3000, new SequentialCommandGroup(new CameraUpdateDetectorResult(camera), new DistanceAdjustLUTThetaR(lowSlide, drive, camera::getTx, camera::getTy, camera::getPx, camera::getPy, mecanumDriveCommand::disableControl, mecanumDriveCommand::enableControl))));
         });
 
         gamepad1Controller.onPressed(ButtonType.DPAD_DOWN, () -> {
@@ -307,8 +316,7 @@ public class Teleop extends LinearOpMode {
             scheduler.schedule(new ActionCommand(lowslideActions.setSpinClawDeg(ConfigVariables.Camera.CLAW_90 + 45)));
         });
 
-        gamepad1Controller.onPressed(gamepad1Controller.button(ButtonType.LEFT_BUMPER),
-                () -> lowerClaw.handleManualControl(System.currentTimeMillis()));
+        gamepad1Controller.onPressed(gamepad1Controller.button(ButtonType.LEFT_BUMPER), () -> lowerClaw.handleManualControl(System.currentTimeMillis()));
 
         gamepad2Controller.onPressed(ButtonType.A, () -> {
             // Use motion profiling for smooth upper slide retraction
@@ -344,31 +352,25 @@ public class Teleop extends LinearOpMode {
         });
 
         gamepad2Controller.onPressed(ButtonType.RIGHT_STICK_BUTTON, () -> {
-            scheduler.schedule(new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions));
+            scheduler.schedule(new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions, colorSensor::caughtDefaultTrue));
         });
         gamepad2Controller.onPressed(ButtonType.LEFT_STICK_BUTTON, () -> {
             scheduler.schedule(new SequentialCommandGroup(new ActionCommand((packet) -> {
                 mecanumDriveCommand.disableControl();
                 return false;
-            }), new ActionCommand(drive.actionBuilder(drive.localizer.getPose())
-                    .strafeToLinearHeading(SCORE.pos, SCORE.heading).build()), new ActionCommand((packet) -> {
-                        mecanumDriveCommand.enableControl();
-                        return false;
-                    })));
+            }), new ActionCommand(drive.actionBuilder(drive.localizer.getPose()).strafeToLinearHeading(SCORE.pos, SCORE.heading).build()), new ActionCommand((packet) -> {
+                mecanumDriveCommand.enableControl();
+                return false;
+            })));
         });
-        gamepad2Controller.onPressed(gamepad2Controller.button(ButtonType.LEFT_BUMPER),
-                () -> upperClaw.handleManualControl(System.currentTimeMillis()));
+        gamepad2Controller.onPressed(gamepad2Controller.button(ButtonType.LEFT_BUMPER), () -> upperClaw.handleManualControl(System.currentTimeMillis()));
 
-        gamepad2Controller.onPressed(gamepad2Controller.button(ButtonType.RIGHT_BUMPER),
-                () -> upperExtendo.handleManualControl(System.currentTimeMillis()));
+        gamepad2Controller.onPressed(gamepad2Controller.button(ButtonType.RIGHT_BUMPER), () -> upperExtendo.handleManualControl(System.currentTimeMillis()));
     }
 
     private void setContinuousControls() {
         gamepad1Controller.onPressed(gamepad1Controller.trigger(GamepadController.TriggerType.RIGHT_TRIGGER), () -> {
-            scheduler.schedule(new SequentialCommandGroup(new LowerSlideGrabSequenceCommand(lowSlide),
-                    new WaitCommand((double) ConfigVariables.LowerSlideVars.POS_HOVER_TIMEOUT / 1000),
-                    new ConditionalCommand(colorSensor::canTransfer,
-                            new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions))));
+            scheduler.schedule(new SequentialCommandGroup(new LowerSlideGrabSequenceCommand(lowSlide), new WaitCommand((double) ConfigVariables.LowerSlideVars.POS_HOVER_TIMEOUT / 1000), new ConditionalCommand(colorSensor::canTransfer, new LowerUpperTransferSequenceCommand(lowslideActions, upslideActions, colorSensor::caughtDefaultTrue))));
         });
         gamepad1Controller.onPressed(gamepad1Controller.trigger(GamepadController.TriggerType.LEFT_TRIGGER), () -> {
             scheduler.schedule(new ActionCommand(lowslideActions.up()));

@@ -326,7 +326,7 @@ public class UpperSlide extends SubsystemBase {
     /**
      * Get the current position of the slide (average of both encoders)
      */
-    public double getCurrentPosition() {
+    public int getCurrentPosition() {
         return slide1.getCurrentPosition() + tickOffset;
     }
 }
