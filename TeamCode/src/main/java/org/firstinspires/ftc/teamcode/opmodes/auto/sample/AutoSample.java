@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.commands.vision.CameraUpdateDetectorResult
 import org.firstinspires.ftc.teamcode.commands.vision.DistanceAdjustLUTThetaR;
 import org.firstinspires.ftc.teamcode.opmodes.auto.SubmersibleSelectionGUI;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoPaths;
-import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSelection;
+// import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSelection;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 // import org.firstinspires.ftc.teamcode.sensors.limelight.LimeLightImageTools;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
@@ -215,13 +215,37 @@ public final class AutoSample extends LinearOpMode {
                                                 upperSlideCommands.scorespec(),
                                                 upperSlideCommands.closeClaw()));
 
+                // Color selection
+                // AutoSelection autoSelection = new AutoSelection(gamepad1); // broken, dont
+                // need
+                // js do this here
+                String color = "blue"; // Default color
+                private ElapsedTime elapsedTime;
+                elapsedTime = new ElapsedTime();
+                while (!gamepad.button.A) {
+                        if (0.25 < elapsedTime.seconds() && gamepad.dpad_right) {
+                                elapsedTime.reset();
+                                color = color == "red" ? "blue" : "red";
+                        }
+                }
+
+                // Set Limelight color based on selection
+                // String selectedColor = autoSelection.getColor().toString().toLowerCase(); //
+                // "red" or "blue"
+                String selectedColor = color;
+                if (selectedColor.equals("blue")) { // cuz this sample, need yellow
+                        camera.setAcceptedColors(true, false, true); // blue, not red, yellow
+                } else if (selectedColor.equals("red")) {
+                        camera.setAcceptedColors(false, true, true); // not blue, red, yellow
+                } else {
+                        camera.setAcceptedColors(false, false, true); // fallback: yellow
+                }
+
                 // SubmersibleSelectionGUI integration
                 SubmersibleSelectionGUI gui = new SubmersibleSelectionGUI();
                 telemetry.addLine(
                                 "Use D-Pad/joystick to select pickup points, A/LB to toggle, Y to preset. Press start when done.");
                 telemetry.update();
-                // Color selection integration
-                // AutoSelection autoSelection = new AutoSelection(gamepad1);
                 while (!isStarted() && !isStopRequested()) {
                         // autoSelection.updateTelemetry(telemetry);
                         telemetry.update();
@@ -229,16 +253,7 @@ public final class AutoSample extends LinearOpMode {
                         gui.drawSub(gamepad1, telemetry);
                         sleep(50);
                 }
-                // Set Limelight color based on selection
-                // String selectedColor = autoSelection.getColor().toString().toLowerCase(); //
-                // "red" or "blue"
-                // if (selectedColor.equals("blue")) {
-                // camera.setAcceptedColors(true, false, false); // blue, not red, not yellow
-                // } else if (selectedColor.equals("red")) {
-                // camera.setAcceptedColors(false, true, false); // not blue, red, not yellow
-                // } else {
-                // camera.setAcceptedColors(false, false, false); // fallback: none
-                // }
+
                 ArrayList<Pose2d> selectedPickupPoints = gui.getDriverSelect();
                 // If none selected, use fallback
                 boolean useFallback = selectedPickupPoints.isEmpty();
