@@ -25,8 +25,8 @@ public class ConfigVariables {
 
                 // Team box corner slowdown settings
                 public static boolean ENABLE_TEAMBOX_SLOWDOWN = true;
-                public static double TEAMBOX_SLOWDOWN_FACTOR = 0.3; // Divide speed by this factor when in team box
-                public static double TEAMBOX_CORNER_SIZE = 60.0; // Size of team box corner in inches (field coordinate
+                public static double TEAMBOX_SLOWDOWN_FACTOR = 0.5; // Divide speed by this factor when in team box
+                public static double TEAMBOX_CORNER_SIZE = 24.0; // Size of team box corner in inches (field coordinate
                                                                  // units)
         }
 
@@ -179,7 +179,7 @@ public class ConfigVariables {
                 public static double SCORESPEC_FRONT_ARM_POS = 0.4;
                 public static double SCORESPEC_FRONT_SWING_POS = 0.65;
 
-                public static double PID_KP = 0.01;
+                public static double PID_KP = 0.02;
                 public static double PID_KI = 0.0;
                 public static double PID_KD = 0.0;
                 public static double PID_KF = 0.0; // Feedforward gain for gravity compensation
@@ -187,7 +187,7 @@ public class ConfigVariables {
                 // Motion profiling parameters
                 public static double MAX_VELOCITY_CM_S = 25.0; // cm/s
                 public static double MAX_ACCELERATION_CM_S2 = 40.0; // cm/s²
-                public static double VELOCITY_FEEDFORWARD = 0.0; // kV gain
+                public static double VELOCITY_FEEDFORWARD = 0.02; // kV gain
                 public static double ACCELERATION_FEEDFORWARD = 0.0; // kA gain
         }
 
