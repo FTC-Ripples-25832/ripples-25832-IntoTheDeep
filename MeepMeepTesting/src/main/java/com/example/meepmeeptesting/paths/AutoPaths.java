@@ -15,9 +15,12 @@ import com.noahbres.meepmeep.roadrunner.DriveShim;
  */
 public final class AutoPaths {
     // Robot dimensions (in inches)
-    public static final double BOT_LENGTH = 15.748;
-    public static final double BOT_WIDTH = 13.386;
-    public static final double TRACK_WIDTH = 11.25286365;
+    public static final double BOT_LENGTH = 15.9;
+    public static final double BOT_WIDTH = 15.6;
+    public static final double TRACK_WIDTH = 11.03;
+    // 24 inch a mat
+    // samples 3.5 inch, half 1.75inch
+    // 22 inch lower extend about from cad
 
     // Common robot positions
     public static final class RobotPosition {
@@ -34,12 +37,18 @@ public final class AutoPaths {
 
     // Sample autonomous positions
     public static final RobotPosition START = new RobotPosition(39.5, 65, 180);
-    public static final RobotPosition PREPLACED = new RobotPosition(47, 46, -90); //?
+//    public static final RobotPosition PICKUP1 = new RobotPosition(56, 52, -110);
+    public static final RobotPosition PICKUP1 = new RobotPosition(59.5, 56.5, -110);
+//    public static final RobotPosition PICKUP2 = new RobotPosition(58, 55, -90);
+    public static final RobotPosition PICKUP2 = new RobotPosition(62, 56, -100);
+    public static final RobotPosition PICKUP3 = new RobotPosition(54.5,54.5, -60);
+//    public static final RobotPosition SCORE = new RobotPosition(57, 57, 225);
+    public static final RobotPosition SCORE = new RobotPosition(60, 60, 225);
 
-    public static final RobotPosition PICKUP1 = new RobotPosition(56, 52, -110);
-    public static final RobotPosition PICKUP2 = new RobotPosition(58, 55, -90);
-    public static final RobotPosition PICKUP3 = new RobotPosition(47.1, 47.1, -45);
-    public static final RobotPosition SCORE = new RobotPosition(57, 57, 225);
+//    public static final RobotPosition SCORE1 = new RobotPosition(59, 57.5, 225);
+//    public static final RobotPosition SCORE2 = new RobotPosition(64, 55, 225);
+//    public static final RobotPosition SCORE3 = new RobotPosition(54.5, 54.5, 225);
+
 
 
 
@@ -81,18 +90,18 @@ public final class AutoPaths {
 
     public static TrajectoryActionBuilder autosamplepath(DriveShim drive) {
         return drive.actionBuilder(START.pose)
-                .strafeToSplineHeading(SCORE.pos, SCORE.heading-Math.toRadians(10))
+//                .strafeToSplineHeading(SCORE.pos, SCORE.heading-Math.toRadians(10))
                 .strafeToSplineHeading(PICKUP1.pos, PICKUP1.heading)
-                .strafeToSplineHeading(SCORE.pos, SCORE.heading+Math.toRadians(20))
+//                .strafeToSplineHeading(SCORE.pos, SCORE.heading+Math.toRadians(20))
                 .strafeToSplineHeading(PICKUP2.pos, PICKUP2.heading)
-                .strafeToSplineHeading(SCORE.pos, SCORE.heading-Math.toRadians(10))
+                .strafeToSplineHeading(SCORE.pos, SCORE.heading)
                 .strafeToSplineHeading(PICKUP3.pos, PICKUP3.heading)
-                .strafeToSplineHeading(SCORE.pos, SCORE.heading+Math.toRadians(20))
+                .strafeToSplineHeading(SCORE.pos, SCORE.heading)
 
 
                 //tank path
                 .strafeTo(new Vector2d(39,28))
-                .splineTo(new Vector2d(30,15), Math.toRadians(205))
+                .splineTo(new Vector2d(30,15), Math.toRadians(-160))
 
                 .setReversed(true)
                 .splineTo(new Vector2d(44,28), SCORE.heading-Math.toRadians(170))

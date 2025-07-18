@@ -11,9 +11,9 @@ import com.acmerobotics.roadrunner.Vector2d;
 @Config
 public final class AutoPaths {
         // Robot dimensions (in inches)
-        public static final double BOT_LENGTH = 15.748;
-        public static final double BOT_WIDTH = 13.386;
-        public static final double TRACK_WIDTH = 11.25286365;
+        public static final double BOT_LENGTH = 15.9;
+        public static final double BOT_WIDTH = 15.6;
+        public static final double TRACK_WIDTH = 11.03;
 
         // Common robot positions
         public static final class RobotPosition {
@@ -29,13 +29,13 @@ public final class AutoPaths {
         }
 
         // Standardized robot positions
+        // Sample autonomous positions
         public static final RobotPosition START = new RobotPosition(39.5, 65, 180);
-        public static final RobotPosition PREPLACED = new RobotPosition(47, 46, -90); //?
+        public static final RobotPosition PICKUP1 = new RobotPosition(59.5, 56.5, -110);
+        public static final RobotPosition PICKUP2 = new RobotPosition(62, 56, -100);
+        public static final RobotPosition PICKUP3 = new RobotPosition(54.5,54.5, -60);
+        public static final RobotPosition SCORE = new RobotPosition(60, 60, 225);
 
-        public static final RobotPosition PICKUP1 = new RobotPosition(56, 52, -110);
-        public static final RobotPosition PICKUP2 = new RobotPosition(58, 55, -90);
-        public static final RobotPosition PICKUP3 = new RobotPosition(47.1, 47.1, -45);
-        public static final RobotPosition SCORE = new RobotPosition(57, 57, 225);
 
 
         // vvvv these mostly arent used rn vvvv
