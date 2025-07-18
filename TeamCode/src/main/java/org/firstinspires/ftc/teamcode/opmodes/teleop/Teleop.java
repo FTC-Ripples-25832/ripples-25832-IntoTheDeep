@@ -82,15 +82,6 @@ public class Teleop extends LinearOpMode {
     private long loopCount = 0;
     private long lastloop = System.currentTimeMillis();
 
-    public static void initializeBulkReads(HardwareMap hardwareMap) {
-        if (allHubs == null) {
-            allHubs = hardwareMap.getAll(LynxModule.class);
-            for (LynxModule hub : allHubs) {
-                hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-            }
-        }
-    }
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -140,21 +131,19 @@ public class Teleop extends LinearOpMode {
 
             gamepad1Controller.update();
             gamepad2Controller.update();
+
+            // update pid in command will cause power error
             lowSlide.updatePID();
             upSlide.updatePID();
 
+            // log looptime for checking, when dashboard is not enabled
             if (loopCount % 20 == 0) {
                 telemetry.addData("looptimems", timestamp - lastloop);
                 telemetry.addData("avglooptimems", (timestamp - starttime) / (double) loopCount);
                 telemetry.update();
             }
 
-
-            // PERFORMANCE OPTIMIZATION: PID updates moved to command system
-            // Manual PID calls removed to prevent double updates
-            // lowSlide.updatePID();
-            // upSlide.updatePID();
-
+            // only send packet if in debug mode
             if (ConfigVariables.General.DEBUG_MODE && timestamp - lastDashboardUpdateTime >= ConfigVariables.General.DASHBOARD_UPDATE_INTERVAL_MS) {
                 packet.put("gamepad1/NoOperationTimems", gamepad1Controller.getNoOperationTime());
                 packet.put("gamepad2/NoOperationTimems", gamepad2Controller.getNoOperationTime());
@@ -179,11 +168,14 @@ public class Teleop extends LinearOpMode {
     }
 
     private void initializeSubsystems() {
-        if (ConfigVariables.General.WITH_STATESAVE) {
-            drive = new MecanumDrive(hardwareMap, RobotStateStore.getPose());
+        // only enable limelight forward if in debug mode
+        if(ConfigVariables.General.DEBUG_MODE){
             LimeLightImageTools llIt = new LimeLightImageTools(camera.limelight);
             llIt.setDriverStationStreamSource();
             llIt.forwardAll();
+        }
+        if (ConfigVariables.General.WITH_STATESAVE) {
+            drive = new MecanumDrive(hardwareMap, RobotStateStore.getPose());
         } else {
             drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         }

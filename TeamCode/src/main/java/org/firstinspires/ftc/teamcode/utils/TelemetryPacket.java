@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import java.util.Map;
 
 /**
- * Container for telemetry information with debug mode support.
+ * Container for telemetry information with debug mode support. (save serialize time)
  */
 public class TelemetryPacket extends com.acmerobotics.dashboard.telemetry.TelemetryPacket {
     private static final Canvas DEFAULT_FIELD = new Canvas();

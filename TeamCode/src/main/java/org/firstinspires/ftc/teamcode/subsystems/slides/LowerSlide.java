@@ -274,7 +274,7 @@ public class LowerSlide extends SubsystemBase {
 
     /**
      * Get the current position of the slide
-     */
+     * */
     public int getCurrentPosition() {
         return slideMotor.getCurrentPosition() + tickOffset;
     }

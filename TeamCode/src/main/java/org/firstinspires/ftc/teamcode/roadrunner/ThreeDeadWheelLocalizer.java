@@ -42,7 +42,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
                 // par0.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 this.inPerTick = inPerTick;
-                if (ConfigVariables.General.DEBUG_MODE)
+                if (ConfigVariables.General.DEBUG_MODE) // only write log if debug mode is enabled, save serialize and file writing time
                         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
 
                 pose = initialPose;
@@ -63,7 +63,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
                 PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
                 PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
                 PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-                if (ConfigVariables.General.DEBUG_MODE)
+                if (ConfigVariables.General.DEBUG_MODE) // only write log if debug mode is enabled, save serialize and file writing time
                         FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS",
                                 new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 
