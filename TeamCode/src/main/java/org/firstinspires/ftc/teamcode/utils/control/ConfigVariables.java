@@ -62,6 +62,7 @@ public class ConfigVariables {
                 public static double H_TRANSFERCOMPLETEAFTERDELAY_S = 0.2;
                 public static double I_SUBDELAY_S = 0.4;
                 public static double J_AFTERSUBDELAY_S = 0.4;
+                public static double K_ROUNDPATHEXITTIME_S = 1.0;
                 public static double Z_LowerslideExtend_FIRST = 24; // was 20
                 public static double Z_LowerslideExtend_SECOND = 25;
                 public static double Z_LowerslideExtend_THIRD = 28;

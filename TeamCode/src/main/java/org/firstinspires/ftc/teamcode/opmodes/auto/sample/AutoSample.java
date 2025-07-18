@@ -400,8 +400,10 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                 .build(),
                                                                                                                                 lowerSlideCommands
                                                                                                                                                 .slidePos1()),
+
                                                                                                                 new WaitCommand(ConfigVariables.AutoTesting.I_SUBDELAY_S)
                                                                                                                                 .toAction(),
+
                                                                                                                 adjustSequence(),
                                                                                                                 new WaitCommand(ConfigVariables.Camera.CAMERA_DELAY)
                                                                                                                                 .toAction(),
@@ -412,6 +414,7 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                 new WaitCommand(ConfigVariables.AutoTesting.J_AFTERSUBDELAY_S)
                                                                                                                                 .toAction(),
                                                                                                                 pickupSequence(),
+
                                                                                                                 new ParallelAction(
                                                                                                                                 drive.actionBuilder(
                                                                                                                                                 SCORE.pose)
@@ -425,7 +428,11 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                                 SCORE.heading - Math
                                                                                                                                                                                 .toRadians(170))
                                                                                                                                                 .build(),
-                                                                                                                                transferWhileDriving()),
+                                                                                                                                new SequentialAction(
+                                                                                                                                        new WaitCommand(ConfigVariables.AutoTesting.K_ROUNDPATHEXITTIME_S).toAction(),
+                                                                                                                                        transferWhileDriving()
+                                                                                                                                )
+                                                                                                                                ),
                                                                                                                 frontForDrop(),
                                                                                                                 dropAndResetUpperSlides()))
                                                                                                 .toArray(Action[]::new)),
