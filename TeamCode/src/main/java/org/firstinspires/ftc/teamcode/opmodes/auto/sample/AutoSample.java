@@ -293,11 +293,11 @@ public final class AutoSample extends LinearOpMode {
                         // Fallback to current hardcoded path
                         pickupPoints = List.of(
                                         new Vector2d(39, 28),
-                                        new Vector2d(30, 15));
+                                        new Vector2d(39, 0));
                 } else {
                         // Use selected points for pickup cycles
                         pickupPoints = selectedPickupPoints.stream()
-                                        .map(p -> new Vector2d(p.position.x, p.position.y))
+                                        .map(p -> new Vector2d(p.position.x + 20, p.position.y)) // PLUS 20 OFFSET SO SLILDES CAN MAX
                                         .collect(Collectors.toList());
                 }
 
