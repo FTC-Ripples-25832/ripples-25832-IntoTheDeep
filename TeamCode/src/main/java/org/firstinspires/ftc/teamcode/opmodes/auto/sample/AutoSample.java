@@ -396,8 +396,7 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                 .strafeTo(new Vector2d(
                                                                                                                                                                 39,
                                                                                                                                                                 28))
-                                                                                                                                                .splineTo(pickupVec,
-                                                                                                                                                                Math.toRadians(205))
+                                                                                                                                                .splineTo(pickupVec, Math.toRadians(-160))
                                                                                                                                                 .build(),
                                                                                                                                 lowerSlideCommands
                                                                                                                                                 .slidePos1()),
