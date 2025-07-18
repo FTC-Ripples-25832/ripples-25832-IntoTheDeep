@@ -16,6 +16,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.base.SaveRobotStateCommand;
 import org.firstinspires.ftc.teamcode.commands.base.WaitCommand;
@@ -215,43 +216,50 @@ public final class AutoSample extends LinearOpMode {
                                                 upperSlideCommands.scorespec(),
                                                 upperSlideCommands.closeClaw()));
 
-                // Color selection
-                // AutoSelection autoSelection = new AutoSelection(gamepad1); // broken, dont
-                // need
-                // js do this here
                 String color = "blue"; // Default color
-                private ElapsedTime elapsedTime;
+                ElapsedTime elapsedTime;
                 elapsedTime = new ElapsedTime();
-                while (!gamepad.button.A) {
-                        if (0.25 < elapsedTime.seconds() && gamepad.dpad_right) {
-                                elapsedTime.reset();
-                                color = color == "red" ? "blue" : "red";
+
+                // SubmersibleSelectionGUI integration
+                SubmersibleSelectionGUI gui = new SubmersibleSelectionGUI();
+
+                while (!isStarted() && !isStopRequested()) {
+                        // Color selection
+                        // AutoSelection autoSelection = new AutoSelection(gamepad1); // broken, dont
+                        // need
+                        // js do this here
+                        while (!gamepad1.a) {
+                                telemetry.addLine(
+                                        "Use D-Pad Right to change color for sample detection, A to go to next phase");
+                                telemetry.addData("selected color: ", color);
+                                telemetry.update();
+
+                                if (0.25 < elapsedTime.seconds() && gamepad1.dpad_right) {
+                                        elapsedTime.reset();
+                                        color = color == "red" ? "blue" : "red";
+                                }
                         }
+
+                        // autoSelection.updateTelemetry(telemetry); unused
+                        telemetry.addLine(
+                                "Use D-Pad/joystick to select pickup points, A/LB to toggle, Y to preset. Press start when done.");
+                        //rm this addline if redundant
+                        telemetry.update();
+                        // gui selection
+                        gui.drawSub(gamepad1, telemetry);
+                        sleep(50);
                 }
 
                 // Set Limelight color based on selection
                 // String selectedColor = autoSelection.getColor().toString().toLowerCase(); //
                 // "red" or "blue"
-                String selectedColor = color;
-                if (selectedColor.equals("blue")) { // cuz this sample, need yellow
+                // String selectedColor = color;
+                if (color.equals("blue")) { // cuz this sample, need yellow
                         camera.setAcceptedColors(true, false, true); // blue, not red, yellow
-                } else if (selectedColor.equals("red")) {
+                } else if (color.equals("red")) {
                         camera.setAcceptedColors(false, true, true); // not blue, red, yellow
                 } else {
                         camera.setAcceptedColors(false, false, true); // fallback: yellow
-                }
-
-                // SubmersibleSelectionGUI integration
-                SubmersibleSelectionGUI gui = new SubmersibleSelectionGUI();
-                telemetry.addLine(
-                                "Use D-Pad/joystick to select pickup points, A/LB to toggle, Y to preset. Press start when done.");
-                telemetry.update();
-                while (!isStarted() && !isStopRequested()) {
-                        // autoSelection.updateTelemetry(telemetry);
-                        telemetry.update();
-                        // Also allow GUI selection
-                        gui.drawSub(gamepad1, telemetry);
-                        sleep(50);
                 }
 
                 ArrayList<Pose2d> selectedPickupPoints = gui.getDriverSelect();
