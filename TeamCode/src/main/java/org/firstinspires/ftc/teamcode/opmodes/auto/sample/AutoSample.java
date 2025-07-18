@@ -219,6 +219,7 @@ public final class AutoSample extends LinearOpMode {
                 String color = "blue"; // Default color
                 ElapsedTime elapsedTime;
                 elapsedTime = new ElapsedTime();
+                boolean colorSelected = false;
 
                 // SubmersibleSelectionGUI integration
                 SubmersibleSelectionGUI gui = new SubmersibleSelectionGUI();
@@ -228,7 +229,7 @@ public final class AutoSample extends LinearOpMode {
                         // AutoSelection autoSelection = new AutoSelection(gamepad1); // broken, dont
                         // need
                         // js do this here
-                        while (!gamepad1.a) {
+                        while (!colorSelected) {
                                 telemetry.addLine(
                                         "Use D-Pad Right to change color for sample detection, A to go to next phase");
                                 telemetry.addData("selected color: ", color);
@@ -237,6 +238,10 @@ public final class AutoSample extends LinearOpMode {
                                 if (0.25 < elapsedTime.seconds() && gamepad1.dpad_right) {
                                         elapsedTime.reset();
                                         color = color == "red" ? "blue" : "red";
+                                }
+
+                                if(gamepad1.a){
+                                        colorSelected = true;
                                 }
                         }
 
