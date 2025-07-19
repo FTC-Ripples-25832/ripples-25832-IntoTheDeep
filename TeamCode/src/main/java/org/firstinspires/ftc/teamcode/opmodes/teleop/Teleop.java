@@ -138,7 +138,7 @@ public class Teleop extends LinearOpMode {
 
             // log looptime for checking, when dashboard is not enabled
             if (loopCount % 20 == 0) {
-                telemetry.addData("looptimems", timestamp - lastloop);
+                telemetry.addData("looptimems", (timestamp - lastloop) / (double) loopCount);
                 telemetry.addData("avglooptimems", (timestamp - starttime) / (double) loopCount);
                 telemetry.update();
             }
@@ -168,12 +168,6 @@ public class Teleop extends LinearOpMode {
     }
 
     private void initializeSubsystems() {
-        // only enable limelight forward if in debug mode
-        if(ConfigVariables.General.DEBUG_MODE){
-            LimeLightImageTools llIt = new LimeLightImageTools(camera.limelight);
-            llIt.setDriverStationStreamSource();
-            llIt.forwardAll();
-        }
         if (ConfigVariables.General.WITH_STATESAVE) {
             drive = new MecanumDrive(hardwareMap, RobotStateStore.getPose());
         } else {
@@ -196,6 +190,13 @@ public class Teleop extends LinearOpMode {
 
         camera.initialize(hardwareMap);
         camera.cameraStart();
+
+        // only enable limelight forward if in debug mode
+        if(ConfigVariables.General.DEBUG_MODE){
+            LimeLightImageTools llIt = new LimeLightImageTools(camera.limelight);
+            llIt.setDriverStationStreamSource();
+            llIt.forwardAll();
+        }
 
         // DISABLED FOR PERFORMANCE: Limelight processing adds ms per loop
         // LimeLightImageTools llIt = new LimeLightImageTools(camera.limelight);

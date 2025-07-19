@@ -12,7 +12,7 @@ public class ConfigVariables {
         @Config
         // @Configurable
         public static class General {
-                public static final boolean DEBUG_MODE = true;
+                public static boolean DEBUG_MODE = true;
                 public static boolean SINGLE_CONTROLLER_MODE = false; // true for single controller mode, false for dual
                                                                       // controller mode
                 public static boolean WITH_STATESAVE = false; // true for state save mode, false for normal mode
@@ -73,7 +73,7 @@ public class ConfigVariables {
 
         @Config
         public static class Camera {
-                public static final double ADJUSTMENT_DELAY = 0.65; // 500ms between adjustments
+                public static double ADJUSTMENT_DELAY = 0.65; // 500ms between adjustments
                 public static double[] RESOLUTION = { 1280, 960 }; // pixels, width and height of camera resolution
                 public static double[] VANISHING_POINT = { 818.9, -991.4 }; // +y down, +x right
                 public static double[] FOV = { 54, 41 }; // degrees, horizontal and vertical field of view of camera
@@ -206,7 +206,7 @@ public class ConfigVariables {
 
                 // slide positions
                 public static double POS_0_CM = 0;
-                public static double POS_1_CM = 30; // max is 40
+                public static double POS_1_CM = 10; // inner transfer, if color sensor not detected
                 public static double POS_2_CM = 12;
 
                 // Claw positions
