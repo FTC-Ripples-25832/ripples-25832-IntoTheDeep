@@ -138,10 +138,11 @@ public class Teleop extends LinearOpMode {
 
             // log looptime for checking, when dashboard is not enabled
             if (loopCount % 20 == 0) {
-                telemetry.addData("looptimems", (timestamp - lastloop) / (double) loopCount);
+                telemetry.addData("looptimems", (timestamp - lastloop));
                 telemetry.addData("avglooptimems", (timestamp - starttime) / (double) loopCount);
                 telemetry.update();
             }
+            lastloop = timestamp;
 
             // only send packet if in debug mode
             if (ConfigVariables.General.DEBUG_MODE && timestamp - lastDashboardUpdateTime >= ConfigVariables.General.DASHBOARD_UPDATE_INTERVAL_MS) {
