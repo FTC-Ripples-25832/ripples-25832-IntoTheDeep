@@ -417,7 +417,7 @@ public final class AutoSample extends LinearOpMode {
 
                                                                                                                 new ParallelAction(
                                                                                                                                 drive.actionBuilder(
-                                                                                                                                                SCORE.pose)
+                                                                                                                                                drive.localizer.getPose())
                                                                                                                                                 .setReversed(true)
                                                                                                                                                 .splineTo(new Vector2d(
                                                                                                                                                                 44,
