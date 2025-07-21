@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
+import org.firstinspires.ftc.teamcode.utils.RobotStateStore;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import org.firstinspires.ftc.teamcode.utils.hardware.BulkReadManager;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
@@ -411,8 +412,6 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                 lowSlide,
                                                                                                                                 camera)
                                                                                                                                 .toAction(),
-                                                                                                                new WaitCommand(ConfigVariables.AutoTesting.J_AFTERSUBDELAY_S)
-                                                                                                                                .toAction(),
                                                                                                                 pickupSequence(),
 
                                                                                                                 new ParallelAction(
@@ -435,8 +434,7 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                 ),
                                                                                                                 frontForDrop(),
                                                                                                                 dropAndResetUpperSlides()))
-                                                                                                .toArray(Action[]::new)),
-                                                                new SaveRobotStateCommand(drive, lowSlide, upSlide)
-                                                                                .toAction())));
+                                                                                                .toArray(Action[]::new)))));
+                RobotStateStore.save(drive.localizer.getPose(), lowSlide.getCurrentPosition(), upSlide.getCurrentPosition());
         }
 }

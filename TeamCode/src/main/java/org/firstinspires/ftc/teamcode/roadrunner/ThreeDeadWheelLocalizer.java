@@ -62,7 +62,8 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
                 this.inPerTick = inPerTick;
 
-                FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
+                if (ConfigVariables.General.DEBUG_MODE) // only write log if debug mode is enabled, save serialize and file writing time
+                        FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
 
                 pose = initialPose;
         }
@@ -82,9 +83,10 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
                 PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
                 PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
                 PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-
-                FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS",
-                                new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
+                
+                if (ConfigVariables.General.DEBUG_MODE) // only write log if debug mode is enabled, save serialize and file writing time
+                                        FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS",
+                                                new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 
                 if (!initialized) {
                         initialized = true;
