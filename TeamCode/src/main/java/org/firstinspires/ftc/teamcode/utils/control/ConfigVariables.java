@@ -42,7 +42,7 @@ public class ConfigVariables {
         @Config
         public static class AutoTesting {
                 public static double A_DROPDELAY_S = 0.3;
-                public static double B_AFTERSCOREDELAY_S = 0.05;
+                public static double B_AFTERSCOREDELAY_S = 0.1;
                 public static double C_AFTERGRABDELAY_S = 0.1;
                 public static double D_SLIDEPOS0AFTERDELAY_S = 0.1;
                 public static double E_LOWSLIDEUPAFTERDELAY_S = 0.55;
@@ -169,7 +169,7 @@ public class ConfigVariables {
                 public static double SCORESPEC_FRONT_ARM_POS = 0.4;
                 public static double SCORESPEC_FRONT_SWING_POS = 0.65;
 
-                public static double PID_KP = 0.02;
+                public static double PID_KP = 0.01;
                 public static double PID_KI = 0.0;
                 public static double PID_KD = 0.0;
                 public static double PID_KF = 0.0; // Feedforward gain for gravity compensation

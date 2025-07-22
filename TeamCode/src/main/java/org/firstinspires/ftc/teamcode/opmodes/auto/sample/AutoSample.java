@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.commands.base.CommandBase;
 import org.firstinspires.ftc.teamcode.commands.base.SaveRobotStateCommand;
 import org.firstinspires.ftc.teamcode.commands.base.WaitCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideCommands;
@@ -60,6 +61,8 @@ public final class AutoSample extends LinearOpMode {
         private BulkReadManager bulkReadManager;
 
         private Limelight camera;
+
+        private Pose2d currPose;
 
         private Action waitSeconds(Pose2d pose, double seconds) {
                 return drive.actionBuilder(pose)
@@ -204,6 +207,29 @@ public final class AutoSample extends LinearOpMode {
                                                 }).toAction());
         }
 
+        public class UpdateCurrPose extends CommandBase {
+                @Override
+                public void initialize() {
+                        currPose = drive.localizer.getPose();
+                }
+
+                // This command must be interrupted after 500ms to stop
+                @Override
+                public long getTimeout() {
+                        return 0;
+                }
+
+                @Override
+                public boolean isFinished() {
+                        return true;
+                }
+
+        }
+
+        private Action updateCurrPose() {
+                return new UpdateCurrPose().toAction();
+        }
+
         @Override
         public void runOpMode() throws InterruptedException {
                 // Initialize BulkReadManager for performance optimization
@@ -231,6 +257,8 @@ public final class AutoSample extends LinearOpMode {
 
                 // Initialize drive with starting pose
                 drive = new MecanumDrive(hardwareMap, START.pose);
+
+                currPose = START.pose;
 
                 // Start position
                 Actions.runBlocking(
@@ -349,14 +377,12 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                 .setSlidePos(ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST), // pre
                                                                                                                                                                                     // aim
                                                                                                 adjustAndPickupSequence(),
-
+                                                                                                updateCurrPose(),
                                                                                                 new ParallelAction(
                                                                                                                 driveToScore(new RobotPosition(
-                                                                                                                                drive.localizer.getPose().position.x,
-                                                                                                                                drive.localizer.getPose().position.y,
-                                                                                                                                Math.toDegrees(drive.localizer
-                                                                                                                                                .getPose().heading
-                                                                                                                                                .toDouble())),
+                                                                                                                                currPose.position.x,
+                                                                                                                                currPose.position.y,
+                                                                                                                                Math.toDegrees(currPose.heading.toDouble())),
                                                                                                                                 PICKUP2),
                                                                                                                 new SequentialAction(
                                                                                                                                 transferSequence(),
@@ -390,13 +416,12 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                           // while
                                                                                                                                                           // scoring
                                                                                                                 )),
+                                                                                                updateCurrPose(),
                                                                                                 transferAndScoreSequence(
                                                                                                                 new RobotPosition(
-                                                                                                                                drive.localizer.getPose().position.x,
-                                                                                                                                drive.localizer.getPose().position.y,
-                                                                                                                                Math.toDegrees(drive.localizer
-                                                                                                                                                .getPose().heading
-                                                                                                                                                .toDouble())),
+                                                                                                                                currPose.position.x,
+                                                                                                                                currPose.position.y,
+                                                                                                                                Math.toDegrees(currPose.heading.toDouble())),
                                                                                                                 SCORE) // score
                                                                                                                        // second
                                                                                 )
@@ -462,8 +487,9 @@ public final class AutoSample extends LinearOpMode {
 
                                                                                                                 new ParallelAction(
                                                                                                                                 new SequentialAction(
+                                                                                                                                                updateCurrPose(),
                                                                                                                                                 drive.actionBuilder(
-                                                                                                                                                                drive.localizer.getPose())
+                                                                                                                                                                currPose)
                                                                                                                                                                 .strafeToSplineHeading(
                                                                                                                                                                                 new Vector2d(44, 28),
                                                                                                                                                                                 SCORE.heading)
