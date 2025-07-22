@@ -226,7 +226,6 @@ public final class AutoSample extends LinearOpMode {
 
                 // Initialize drive with starting pose
                 drive = new MecanumDrive(hardwareMap, START.pose);
-
                 // Start position
                 Actions.runBlocking(
                                 new SequentialAction(
