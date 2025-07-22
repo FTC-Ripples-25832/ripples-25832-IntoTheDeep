@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.commands.base.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.base.WaitCommand;
 import org.firstinspires.ftc.teamcode.commands.base.WaitForConditionCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.MecanumDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.hang.HangingCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideCommands;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideGrabSequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideUpdatePID;
@@ -36,6 +37,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.sensors.ColorSensorImpl;
 // import org.firstinspires.ftc.teamcode.sensors.limelight.LimeLightImageTools;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
+import org.firstinspires.ftc.teamcode.subsystems.hang.Hanging;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
 import org.firstinspires.ftc.teamcode.utils.ClawController;
@@ -59,6 +61,7 @@ public class Teleop extends LinearOpMode {
     private UpperSlide upSlide;
     private LowerSlide lowSlide;
     private Limelight camera;
+    private Hanging hanging;
 
     private UpperSlideCommands upslideActions;
     private LowerSlideCommands lowslideActions;
@@ -104,6 +107,14 @@ public class Teleop extends LinearOpMode {
         while (!isStopRequested() && !opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
             scheduler.run(packet);
+
+            if(gamepad1.a){ // press gamepad1 A if lowarm stuck
+                scheduler.schedule(new ActionCommand(lowslideActions.safeFloorToUp()));
+            }
+
+            if(gamepad2.a){ // press gamepad2 A if uparm stuck
+                scheduler.schedule(new ActionCommand(upslideActions.safeBackToFront()));
+            }
             // gamepad1Controller.update();
             // gamepad2Controller.update();
         }
@@ -156,7 +167,7 @@ public class Teleop extends LinearOpMode {
             }
 
         }
-        if (ConfigVariables.General.WITH_STATESAVE) {
+        if (ConfigVariables.General.WITH_STATESAVE && ConfigVariables.General.DEBUG_MODE) {
             RobotStateStore.save(drive.localizer.getPose(), lowSlide.getCurrentPosition(),
                     upSlide.getCurrentPosition());
         }
@@ -184,13 +195,13 @@ public class Teleop extends LinearOpMode {
         lowSlide = new LowerSlide();
         camera = new Limelight();
         colorSensor = new ColorSensorImpl(hardwareMap);
-
+        hanging = new Hanging();
         scheduler.registerSubsystem(upSlide);
         scheduler.registerSubsystem(lowSlide);
 
         upSlide.initialize(hardwareMap);
         lowSlide.initialize(hardwareMap);
-
+        hanging.initialize(hardwareMap);
         camera.initialize(hardwareMap);
         camera.cameraStart();
 
@@ -400,6 +411,15 @@ public class Teleop extends LinearOpMode {
 
         gamepad2Controller.onPressed(gamepad2Controller.trigger(GamepadController.TriggerType.LEFT_TRIGGER), () -> {
             scheduler.schedule(new ActionCommand(upslideActions.front()));
+        });
+        gamepad2Controller.onPressed( () -> gamepad2.right_stick_y > 0.5, () -> {
+            scheduler.schedule(new HangingCommand(hanging, HangingCommand.Direction.FORWARD));
+        });
+        gamepad2Controller.onPressed( () -> gamepad2.right_stick_y < -0.5, () -> {
+            scheduler.schedule(new HangingCommand(hanging, HangingCommand.Direction.BACKWARD));
+        });
+        gamepad2Controller.onPressed( () -> Math.abs(gamepad2.right_stick_y - 0) < 0.5, () -> {
+            scheduler.schedule(new HangingCommand(hanging, HangingCommand.Direction.STOP));
         });
     }
 

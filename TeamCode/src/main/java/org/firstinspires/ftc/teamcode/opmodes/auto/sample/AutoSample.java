@@ -382,7 +382,8 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                 driveToScore(new RobotPosition(
                                                                                                                                 currPose.position.x,
                                                                                                                                 currPose.position.y,
-                                                                                                                                Math.toDegrees(currPose.heading.toDouble())),
+                                                                                                                                Math.toDegrees(currPose.heading
+                                                                                                                                                .toDouble())),
                                                                                                                                 PICKUP2),
                                                                                                                 new SequentialAction(
                                                                                                                                 transferSequence(),
@@ -421,7 +422,8 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                 new RobotPosition(
                                                                                                                                 currPose.position.x,
                                                                                                                                 currPose.position.y,
-                                                                                                                                Math.toDegrees(currPose.heading.toDouble())),
+                                                                                                                                Math.toDegrees(currPose.heading
+                                                                                                                                                .toDouble())),
                                                                                                                 SCORE) // score
                                                                                                                        // second
                                                                                 )

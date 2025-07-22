@@ -15,7 +15,7 @@ public class ConfigVariables {
                 public static boolean DEBUG_MODE = false;
                 public static boolean SINGLE_CONTROLLER_MODE = false; // true for single controller mode, false for dual
                                                                       // controller mode
-                public static boolean WITH_STATESAVE = false; // true for state save mode, false for normal mode
+                public static boolean WITH_STATESAVE = true; // true for state save mode, false for normal mode
                 public static long DASHBOARD_UPDATE_INTERVAL_MS = 1;
                 public static double DRIVE_ROTATE_FACTOR = 0.5;
                 public static double HANGING_SERVOS_SPEED = 0.8; // pwm unit
