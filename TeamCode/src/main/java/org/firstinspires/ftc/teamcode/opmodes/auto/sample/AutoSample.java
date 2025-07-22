@@ -464,22 +464,10 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                 new SequentialAction(
                                                                                                                                                 drive.actionBuilder(
                                                                                                                                                                 drive.localizer.getPose())
+                                                                                                                                                                .strafeToSplineHeading(
+                                                                                                                                                                                new Vector2d(44, 28),
+                                                                                                                                                                                SCORE.heading)
                                                                                                                                                                 .setReversed(true)
-                                                                                                                                                                .build(),
-                                                                                                                                                drive.actionBuilder(
-                                                                                                                                                                drive.localizer.getPose())
-                                                                                                                                                                .splineTo(new Vector2d(
-                                                                                                                                                                                44,
-                                                                                                                                                                                28),
-                                                                                                                                                                                SCORE.heading - Math
-                                                                                                                                                                                                .toRadians(170))
-                                                                                                                                                                .build(),
-                                                                                                                                                drive.actionBuilder(
-                                                                                                                                                                drive.localizer.getPose())
-                                                                                                                                                                .setReversed(true)
-                                                                                                                                                                .build(),
-                                                                                                                                                drive.actionBuilder(
-                                                                                                                                                                drive.localizer.getPose())
                                                                                                                                                                 .splineTo(SCORE.pos,
                                                                                                                                                                                 SCORE.heading - Math
                                                                                                                                                                                                 .toRadians(170))
