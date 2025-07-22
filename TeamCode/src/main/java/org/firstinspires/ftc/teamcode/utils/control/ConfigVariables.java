@@ -46,8 +46,8 @@ public class ConfigVariables {
                 public static double C_AFTERGRABDELAY_S = 0.1;
                 public static double D_SLIDEPOS0AFTERDELAY_S = 0.1;
                 public static double E_LOWSLIDEUPAFTERDELAY_S = 0.55;
-                public static double F_TRANSFERAFTERDELAY_S = 0.2;
-                public static double G_LOWSLIDETRANSFEROPENCLAWAFTERDELAY_S = 0.05;
+                public static double F_TRANSFERAFTERDELAY_S = 0.25;
+                public static double G_LOWSLIDETRANSFEROPENCLAWAFTERDELAY_S = 0.1;
                 public static double H_TRANSFERCOMPLETEAFTERDELAY_S = 0.2;
                 public static double I_SUBDELAY_S = 0.4;
                 public static double J_AFTERSUBDELAY_S = 0.4;
