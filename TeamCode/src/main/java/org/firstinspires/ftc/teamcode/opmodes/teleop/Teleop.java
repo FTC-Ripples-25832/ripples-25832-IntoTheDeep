@@ -421,9 +421,6 @@ public class Teleop extends LinearOpMode {
         gamepad2Controller.onPressed( () -> Math.abs(gamepad2.right_stick_y - 0) < 0.5, () -> {
             scheduler.schedule(new HangingCommand(hanging, HangingCommand.Direction.STOP));
         });
-        gamepad2Controller.onPressed(gamepad2Controller.trigger(GamepadController.TriggerType.LEFT_TRIGGER), () -> {
-            scheduler.schedule(new ActionCommand(upslideActions.front()));
-        });
     }
 
 }
