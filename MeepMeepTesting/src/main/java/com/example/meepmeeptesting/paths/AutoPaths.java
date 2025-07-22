@@ -103,9 +103,13 @@ public final class AutoPaths {
                 .strafeTo(new Vector2d(39,28))
                 .splineTo(new Vector2d(30,15), Math.toRadians(-160))
 
-                .setReversed(true)
-                .splineTo(new Vector2d(44,28), SCORE.heading-Math.toRadians(170))
-                .splineTo(SCORE.pos, SCORE.heading-Math.toRadians(170));
+
+
+                .strafeToSplineHeading(new Vector2d(44,28), SCORE.heading)
+//                .setReversed(true)
+//                .splineTo(SCORE.pos, SCORE.heading-Math.toRadians(170));
+                // both works i think
+                .strafeToSplineHeading(SCORE.pos, SCORE.heading);
 
     }
 

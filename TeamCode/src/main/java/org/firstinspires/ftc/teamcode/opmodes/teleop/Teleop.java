@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideCommands;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideGrabSequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideUpdatePID;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerUpperTransferSequenceCommand;
-import org.firstinspires.ftc.teamcode.commands.slide.MotionProfiledSlideCommand;
+//import org.firstinspires.ftc.teamcode.commands.slide.MotionProfiledSlideCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.UpperSlideCommands;
 import org.firstinspires.ftc.teamcode.commands.slide.UpperSlideScoreCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.UpperSlideUpdatePID;
@@ -238,12 +238,12 @@ public class Teleop extends LinearOpMode {
 
         gamepad1Controller.onPressed(ButtonType.A, () -> {
             // Use motion profiling for smooth lower slide retraction
-            scheduler.schedule(MotionProfiledSlideCommand.lowerSlideOnly(lowSlide, 0.0));
+            scheduler.schedule(new ActionCommand(lowslideActions.slidePos0()));
         });
 
         gamepad1Controller.onPressed(ButtonType.B, () -> {
             // Use motion profiling for smooth upper slide retraction
-            scheduler.schedule(MotionProfiledSlideCommand.upperSlideOnly(upSlide, 0.0));
+            scheduler.schedule(new ActionCommand(upslideActions.slidePos0()));
         });
         gamepad1Controller.onPressed(ButtonType.X, () -> {
             scheduler.schedule(new ActionCommand(lowslideActions.hover()));
@@ -342,7 +342,7 @@ public class Teleop extends LinearOpMode {
 
         gamepad2Controller.onPressed(ButtonType.A, () -> {
             // Use motion profiling for smooth upper slide retraction
-            scheduler.schedule(MotionProfiledSlideCommand.upperSlideOnly(upSlide, 0.0));
+            scheduler.schedule(new ActionCommand(upslideActions.slidePos0()));
         });
         // adding tick not pos, direction reversed
         gamepad2Controller.whilePressed(ButtonType.X, (d) -> {
