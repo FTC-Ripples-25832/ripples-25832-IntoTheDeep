@@ -12,7 +12,7 @@ public class ConfigVariables {
         @Config
         // @Configurable
         public static class General {
-                public static boolean DEBUG_MODE = true;
+                public static boolean DEBUG_MODE = false;
                 public static boolean SINGLE_CONTROLLER_MODE = false; // true for single controller mode, false for dual
                                                                       // controller mode
                 public static boolean WITH_STATESAVE = false; // true for state save mode, false for normal mode
@@ -41,18 +41,6 @@ public class ConfigVariables {
 
         @Config
         public static class AutoTesting {
-                // State machine timeouts
-                public static final double STATE_TIMEOUT = 5.0;
-                public static final double VISION_ALIGN_TIMEOUT = 3.0;
-                public static final double GRAB_SEQUENCE_TIMEOUT = 2.0;
-                public static final double SCORE_SEQUENCE_TIMEOUT = 2.0;
-
-                // Movement delays
-                public static final double AFTER_MOVE_DELAY = 0.3;
-                public static final double AFTER_ALIGN_DELAY = 0.2;
-                public static final double AFTER_GRAB_DELAY = 0.5;
-                public static final double AFTER_SCORE_DELAY = 0.5;
-
                 public static double A_DROPDELAY_S = 0.3;
                 public static double B_AFTERSCOREDELAY_S = 0.05;
                 public static double C_AFTERGRABDELAY_S = 0.1;
@@ -64,8 +52,8 @@ public class ConfigVariables {
                 public static double I_SUBDELAY_S = 0.4;
                 public static double J_AFTERSUBDELAY_S = 0.4;
                 public static double K_ROUNDPATHEXITTIME_S = 1.0;
-                public static double Z_LowerslideExtend_FIRST = 24; // was 20
-                public static double Z_LowerslideExtend_SECOND = 25;
+                public static double Z_LowerslideExtend_FIRST = 40; // was 20
+                public static double Z_LowerslideExtend_SECOND = 40;
                 public static double Z_LowerslideExtend_THIRD = 28;
                 public static double Y_PICKUPDELAY = Camera.CAMERA_DELAY;
                 public static double X_TRANSFERWHILEDRIVEAFTERTRANSFERDELAY_S = 0.1;
@@ -154,7 +142,7 @@ public class ConfigVariables {
                 public static double FRONT_ARM_POS = 0.7;
                 public static double FRONT_SWING_POS = 0.65;
                 public static double BEHIND_ARM_POS = 0.3;
-                public static double BEHIND_SWING_POS = 1.0;
+                public static double BEHIND_SWING_POS = 0.0;
                 public static double INTER_ARM_POS = 0.5;
                 public static double INTER_SWING_POS = 0.8;
 
@@ -169,7 +157,7 @@ public class ConfigVariables {
                 public static double POS_PRE_0_CM = 10.0;
                 public static double POS_1_CM = 13;
                 public static double POS_2_CM = 40;
-                public static double POS_3_CM = 75.0;
+                public static double POS_3_CM = 70;
 
                 // offwall positions
                 public static double OFFWALL_FRONT_ARM_POS = 0.9;
@@ -207,7 +195,7 @@ public class ConfigVariables {
 
                 // slide positions
                 public static double POS_0_CM = 0;
-                public static double POS_1_CM = 10; // inner transfer, if color sensor not detected
+                public static double POS_1_CM = 14; // inner transfer, if color sensor not detected
                 public static double POS_2_CM = 12;
 
                 // Claw positions
@@ -219,7 +207,7 @@ public class ConfigVariables {
                 public static int POS_HOVER_TIMEOUT = 200;
 
                 // spin claw positions angle degrees
-                public static int ZERO = 0;
+                public static int ZERO = 90;
                 public static int SPINCLAW_DEG = 45;
                 public static double PID_KP = 0.015;
                 public static double PID_KI = 0.005;
