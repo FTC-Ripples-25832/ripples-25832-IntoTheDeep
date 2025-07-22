@@ -104,6 +104,14 @@ public class Teleop extends LinearOpMode {
         while (!isStopRequested() && !opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
             scheduler.run(packet);
+
+            if(gamepad1.a){ // press gamepad1 A if lowarm stuck
+                scheduler.schedule(new ActionCommand(lowslideActions.safeFloorToUp()));
+            }
+
+            if(gamepad2.a){ // press gamepad2 A if uparm stuck
+                scheduler.schedule(new ActionCommand(upslideActions.safeBackToFront()));
+            }
             // gamepad1Controller.update();
             // gamepad2Controller.update();
         }

@@ -8,7 +8,9 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.commands.base.WaitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
+import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables.LowerSlideVars;
 import org.firstinspires.ftc.teamcode.utils.control.ExpansionHub;
 
@@ -179,6 +181,15 @@ public class LowerSlideCommands {
                                 upPart1(),
                                 upPart2(),
                                 setSpinClawDeg(LowerSlideVars.SPINCLAW_DEG));
+        }
+        public Action safeFloorToUp(){
+                setPart1Pos(LowerSlideVars.HOVER_BIG);
+                setPart2Pos(LowerSlideVars.HOVER_BIG);
+                return new ParallelAction(
+                        new WaitCommand((double) LowerSlideVars.POS_GRAB_TIMEOUT /1000/2).toAction(),
+                        upPart1(),
+                        upPart2(),
+                        setSpinClawDeg(LowerSlideVars.SPINCLAW_DEG));
         }
 
         // CLAW COMMANDS
