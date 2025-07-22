@@ -205,6 +205,14 @@ public class UpperSlideCommands {
                                 setArmPos(UpperSlideVars.FRONT_ARM_POS),
                                 setSwingPos(UpperSlideVars.FRONT_SWING_POS));
         }
+        public Action safeBackToFront() {
+                return new SequentialAction(
+                        setArmPos(UpperSlideVars.FRONT_ARM_POS/2),
+                        new WaitCommand(UpperSlideVars.FRONT_DELAY/2).toAction(),
+                        setArmPos(UpperSlideVars.FRONT_ARM_POS),
+                        setSwingPos(UpperSlideVars.FRONT_SWING_POS));
+        }
+
 
         public Action offwall() {
                 return new SequentialAction(
