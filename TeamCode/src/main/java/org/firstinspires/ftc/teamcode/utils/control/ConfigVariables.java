@@ -42,7 +42,7 @@ public class ConfigVariables {
         @Config
         public static class AutoTesting {
                 public static double A_DROPDELAY_S = 0.3;
-                public static double B_AFTERSCOREDELAY_S = 0.1;
+                public static double B_AFTERSCOREDELAY_S = 0.2;
                 public static double C_AFTERGRABDELAY_S = 0.1;
                 public static double D_SLIDEPOS0AFTERDELAY_S = 0.1;
                 public static double E_LOWSLIDEUPAFTERDELAY_S = 0.55;

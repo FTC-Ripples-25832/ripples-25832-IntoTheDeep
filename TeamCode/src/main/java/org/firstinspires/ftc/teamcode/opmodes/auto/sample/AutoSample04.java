@@ -42,11 +42,28 @@ public final class AutoSample04 extends LinearOpMode {
 
         private Limelight camera;
 
-
         private Action waitSeconds(Pose2d pose, double seconds) {
                 return drive.actionBuilder(pose)
                                 .waitSeconds(seconds)
                                 .build();
+        }
+
+        private Action transferSequence() {
+                return new LowerUpperTransferSequenceCommand(lowerSlideCommands, upperSlideCommands).toAction();
+        }
+
+        private Action pickupSequence() {
+                return new LowerSlideGrabSequenceCommand(lowSlide).toAction();
+        }
+
+        private Action adjustSequence() {
+                return new SequentialAction(
+                                new CameraUpdateDetectorResult(camera).toAction(),
+                                new DistanceAdjustLUTThetaR(lowSlide, drive,
+                                                camera::getTx, camera::getTy, camera::getPx, camera::getPy,
+                                                () -> {
+                                                }, () -> {
+                                                }).toAction());
         }
 
         private SequentialAction scoreSequence(RobotPosition startPOS, double lowerslideExtendLength) {
@@ -54,7 +71,7 @@ public final class AutoSample04 extends LinearOpMode {
                                 new ParallelAction(
                                                 // Drive to score
                                                 drive.actionBuilder(startPOS.pose)
-                                                                .strafeToLinearHeading(SCORE.pos, SCORE.heading)
+                                                                .strafeToLinearHeading(aSCORE.pos, aSCORE.heading)
                                                                 .build(),
                                                 upperSlideCommands.closeClaw(),
                                                 upperSlideCommands.front(),
@@ -66,13 +83,13 @@ public final class AutoSample04 extends LinearOpMode {
 
                                 waitSeconds(SCORE.pose, ConfigVariables.AutoTesting.A_DROPDELAY_S),
                                 upperSlideCommands.openExtendoClaw(),
-                                waitSeconds(SCORE.pose, ConfigVariables.AutoTesting.A_DROPDELAY_S),
+                                waitSeconds(aSCORE.pose, ConfigVariables.AutoTesting.A_DROPDELAY_S),
 
                                 new ParallelAction(
                                                 new SequentialAction(
                                                                 upperSlideCommands.openClaw(), // drop
                                                                 // SCORED
-                                                                waitSeconds(SCORE.pose,
+                                                                waitSeconds(aSCORE.pose,
                                                                                 ConfigVariables.AutoTesting.B_AFTERSCOREDELAY_S),
                                                                 new ParallelAction(
                                                                                 upperSlideCommands.closeExtendoClaw(),
@@ -97,36 +114,13 @@ public final class AutoSample04 extends LinearOpMode {
                                                 .build(),
 
                                 waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.Y_PICKUPDELAY),
-                                new RaceAction(
-                                                lowerSlideCommands.setSlidePos(lowerslideExtendLength),
-                                                new SequentialAction(
-                                                                new CameraUpdateDetectorResult(camera).toAction(),
-                                                                new DistanceAdjustLUTY(lowSlide, camera::getTy)
-                                                                                .toAction())),
+
+                                adjustSequence(),
 
                                 new ParallelAction(
                                                 new AngleAdjustCommand(lowSlide, camera).toAction(),
                                                 // Grab
-                                                new RaceAction(
-                                                                new SequentialAction(
-                                                                                new CameraUpdateDetectorResult(camera)
-                                                                                                .toAction(),
-                                                                                new DistanceAdjustLUTX(drive,
-                                                                                                camera::getTx,
-                                                                                                camera::getTy,
-                                                                                                camera::getPx,
-                                                                                                camera::getPy,
-                                                                                                   () -> {
-                                                                                                }, () -> {
-                                                                                                }).toAction()),
-                                                        new SequentialCommandGroup(
-                                                        new ActionCommand(new LowerSlideCommands(lowSlide).openClaw()),
-                                                        new ActionCommand(new LowerSlideCommands(lowSlide).grabPart1()),
-                                                        new ActionCommand(new LowerSlideCommands(lowSlide).grabPart2()),
-                                                        new WaitCommand(ConfigVariables.LowerSlideVars.POS_GRAB_TIMEOUT/1000.0),
-                                                        new ActionCommand(new LowerSlideCommands(lowSlide).closeClaw()),
-                                                        new WaitCommand(ConfigVariables.LowerSlideVars.CLAW_CLOSE_TIMEOUT/1000.0),
-                                                        new ActionCommand(new LowerSlideCommands(lowSlide).hover())).toAction())),
+                                                pickupSequence()),
 
                                 waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.C_AFTERGRABDELAY_S),
                                 // retract, remember to keep pos_hover() when retracting slides
@@ -135,19 +129,7 @@ public final class AutoSample04 extends LinearOpMode {
 
                                 // transfer sequence
                                 waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.D_SLIDEPOS0AFTERDELAY_S),
-                                new ParallelAction(
-                                                lowerSlideCommands.up(),
-                                                upperSlideCommands.slidePos1()),
-                                waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.E_LOWSLIDEUPAFTERDELAY_S),
-                                upperSlideCommands.transfer(),
-
-                                waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.F_TRANSFERAFTERDELAY_S),
-                                upperSlideCommands.closeClaw(),
-
-                                waitSeconds(pickupPos.pose,
-                                                ConfigVariables.AutoTesting.G_LOWSLIDETRANSFEROPENCLAWAFTERDELAY_S),
-                                lowerSlideCommands.openClaw(),
-
+                                transferSequence(),
                                 // Score
                                 waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.H_TRANSFERCOMPLETEAFTERDELAY_S),
                                 scoreSequence(pickupPos, lowerslideExtendLength));
@@ -192,22 +174,22 @@ public final class AutoSample04 extends LinearOpMode {
                                                 new SequentialAction(
                                                                 upperSlideCommands.scorespec(),
 
-                                                                scoreSequence(START,
+                                                                scoreSequence(aSTART,
                                                                                 ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST),
 
                                                                 new ParallelAction(
-                                                                                pickupAndScoreSequence(SCORE, PICKUP1,
+                                                                                pickupAndScoreSequence(aSCORE, aPICKUP1,
                                                                                                 ConfigVariables.AutoTesting.Z_LowerslideExtend_SECOND),
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO)),
                                                                 new ParallelAction(
-                                                                                pickupAndScoreSequence(SCORE, PICKUP2,
+                                                                                pickupAndScoreSequence(aSCORE, aPICKUP2,
                                                                                                 ConfigVariables.AutoTesting.Z_LowerslideExtend_THIRD),
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO)),
 
                                                                 new ParallelAction(
-                                                                                pickupAndScoreSequence(SCORE, PICKUP3,
+                                                                                pickupAndScoreSequence(aSCORE, aPICKUP3,
                                                                                                 0),
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO
