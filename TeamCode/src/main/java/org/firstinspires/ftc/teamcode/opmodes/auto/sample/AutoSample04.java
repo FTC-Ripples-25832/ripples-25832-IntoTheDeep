@@ -30,7 +30,9 @@ import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoPaths;
+import org.firstinspires.ftc.teamcode.utils.RobotStateStore;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
+import org.firstinspires.ftc.teamcode.utils.timing.Interval;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPaths.*;
 
@@ -102,7 +104,8 @@ public final class AutoSample04 extends LinearOpMode {
                                                                 upperSlideCommands.slidePos0()),
 
                                                 // lowerslide prepare for next cycle
-                                                lowerSlideCommands.hover()));
+                                                lowerSlideCommands.hover(),
+                                        lowerSlideCommands.setSlidePos(lowerslideExtendLength)));
 
         }
 
@@ -121,7 +124,6 @@ public final class AutoSample04 extends LinearOpMode {
                                 adjustSequence(),
 
                                 new ParallelAction(
-                                                new AngleAdjustCommand(lowSlide, camera).toAction(),
                                                 // Grab
                                                 pickupSequence()),
 
@@ -156,13 +158,20 @@ public final class AutoSample04 extends LinearOpMode {
 
                 // Initialize drive with starting pose
                 drive = new MecanumDrive(hardwareMap, START.pose);
-
+                new Interval(()->{
+                        if(this.isStopRequested()){
+                                lowSlide.pos_up();
+                                upSlide.inter();
+                                RobotStateStore.save(drive.localizer.getPose(), lowSlide.getCurrentPosition(), upSlide.getCurrentPosition());
+                        }
+                }, 1);
                 // Start position
                 Actions.runBlocking(
                                 new SequentialAction(
                                                 lowerSlideCommands.up(),
                                                 upperSlideCommands.scorespec(),
                                                 upperSlideCommands.closeClaw()));
+                this.stop();
 
                 waitForStart();
                 camera.cameraStart();
@@ -178,16 +187,16 @@ public final class AutoSample04 extends LinearOpMode {
                                                                 upperSlideCommands.scorespec(),
 
                                                                 scoreSequence(aSTART,
-                                                                                ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST),
+                                                                        ConfigVariables.AutoTesting.Z_04_LowerslideExtend_FIRST),
 
                                                                 new ParallelAction(
                                                                                 pickupAndScoreSequence(aSCORE, aPICKUP1,
-                                                                                                ConfigVariables.AutoTesting.Z_LowerslideExtend_SECOND),
+                                                                                        ConfigVariables.AutoTesting.Z_04_LowerslideExtend_SECOND),
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO)),
                                                                 new ParallelAction(
                                                                                 pickupAndScoreSequence(aSCORE, aPICKUP2,
-                                                                                                ConfigVariables.AutoTesting.Z_LowerslideExtend_THIRD),
+                                                                                        ConfigVariables.AutoTesting.Z_04_LowerslideExtend_THIRD),
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO)),
 
@@ -215,5 +224,7 @@ public final class AutoSample04 extends LinearOpMode {
                                                 // TELEOP_START.heading)
                                                 // .build()
                                                 )));
+                this.stop();
         }
+
 }
