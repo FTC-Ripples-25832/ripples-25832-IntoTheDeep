@@ -11,7 +11,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -20,7 +19,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.commands.base.CommandBase;
 import org.firstinspires.ftc.teamcode.commands.base.SaveRobotStateCommand;
 import org.firstinspires.ftc.teamcode.commands.base.WaitCommand;
 import org.firstinspires.ftc.teamcode.commands.slide.LowerSlideCommands;
@@ -41,7 +39,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
-import org.firstinspires.ftc.teamcode.utils.RobotStateStore;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import org.firstinspires.ftc.teamcode.utils.hardware.BulkReadManager;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
@@ -61,8 +58,6 @@ public final class AutoSample extends LinearOpMode {
         private BulkReadManager bulkReadManager;
 
         private Limelight camera;
-
-        private Pose2d currPose;
 
         private Action waitSeconds(Pose2d pose, double seconds) {
                 return drive.actionBuilder(pose)
@@ -193,41 +188,12 @@ public final class AutoSample extends LinearOpMode {
 
         private Action adjustSequence() {
                 return new SequentialAction(
-                                // Cancel any running drive trajectory by setting drive powers to zero
-                                // packet -> {
-                                // drive.setDrivePowers(new PoseVelocity2d(
-                                // new Vector2d(0, 0), 0));
-                                // return false; // End immediately
-                                // },
                                 new CameraUpdateDetectorResult(camera).toAction(),
                                 new DistanceAdjustLUTThetaR(lowSlide, drive,
                                                 camera::getTx, camera::getTy, camera::getPx, camera::getPy,
                                                 () -> {
                                                 }, () -> {
                                                 }).toAction());
-        }
-
-        public class UpdateCurrPose extends CommandBase {
-                @Override
-                public void initialize() {
-                        currPose = drive.localizer.getPose();
-                }
-
-                // This command must be interrupted after 500ms to stop
-                @Override
-                public long getTimeout() {
-                        return 0;
-                }
-
-                @Override
-                public boolean isFinished() {
-                        return true;
-                }
-
-        }
-
-        private Action updateCurrPose() {
-                return new UpdateCurrPose().toAction();
         }
 
         @Override
@@ -257,8 +223,6 @@ public final class AutoSample extends LinearOpMode {
 
                 // Initialize drive with starting pose
                 drive = new MecanumDrive(hardwareMap, START.pose);
-
-                currPose = START.pose;
 
                 // Start position
                 Actions.runBlocking(
@@ -365,25 +329,19 @@ public final class AutoSample extends LinearOpMode {
                                                                                 driveToScore(START, PICKUP1), // inited
                                                                                                               // sample
                                                                                 prepUpperSlides(),
-                                                                                // lowerSlideCommands.setSlidePos(ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST),
-                                                                                // // pre aim
+                                                                                lowerSlideCommands.setSlidePos(
+                                                                                                ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST), // pre
+                                                                                                                                                       // aim
                                                                                 lowerSlideCommands.setSpinClawDeg(
                                                                                                 ConfigVariables.LowerSlideVars.ZERO)),
                                                                 new ParallelAction( // start pickup when scoring init
                                                                                     // sample
                                                                                 dropAndResetUpperSlides(),
                                                                                 new SequentialAction(
-                                                                                                lowerSlideCommands
-                                                                                                                .setSlidePos(ConfigVariables.AutoTesting.Z_LowerslideExtend_FIRST), // pre
-                                                                                                                                                                                    // aim
                                                                                                 adjustAndPickupSequence(),
-                                                                                                updateCurrPose(),
+
                                                                                                 new ParallelAction(
-                                                                                                                driveToScore(new RobotPosition(
-                                                                                                                                currPose.position.x,
-                                                                                                                                currPose.position.y,
-                                                                                                                                Math.toDegrees(currPose.heading
-                                                                                                                                                .toDouble())),
+                                                                                                                driveToScore(PICKUP1,
                                                                                                                                 PICKUP2),
                                                                                                                 new SequentialAction(
                                                                                                                                 transferSequence(),
@@ -417,13 +375,8 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                           // while
                                                                                                                                                           // scoring
                                                                                                                 )),
-                                                                                                updateCurrPose(),
                                                                                                 transferAndScoreSequence(
-                                                                                                                new RobotPosition(
-                                                                                                                                currPose.position.x,
-                                                                                                                                currPose.position.y,
-                                                                                                                                Math.toDegrees(currPose.heading
-                                                                                                                                                .toDouble())),
+                                                                                                                PICKUP2,
                                                                                                                 SCORE) // score
                                                                                                                        // second
                                                                                 )
@@ -485,21 +438,21 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                 lowSlide,
                                                                                                                                 camera)
                                                                                                                                 .toAction(),
+                                                                                                                new WaitCommand(ConfigVariables.AutoTesting.J_AFTERSUBDELAY_S)
+                                                                                                                                .toAction(),
                                                                                                                 pickupSequence(),
 
                                                                                                                 new ParallelAction(
-                                                                                                                                new SequentialAction(
-                                                                                                                                                updateCurrPose(),
-                                                                                                                                                drive.actionBuilder(
-                                                                                                                                                                currPose)
-                                                                                                                                                                .strafeToSplineHeading(
-                                                                                                                                                                                new Vector2d(44, 28),
-                                                                                                                                                                                SCORE.heading)
-                                                                                                                                                                .setReversed(true)
-                                                                                                                                                                .splineTo(SCORE.pos,
-                                                                                                                                                                                SCORE.heading - Math
-                                                                                                                                                                                                .toRadians(170))
-                                                                                                                                                                .build()),
+                                                                                                                                drive.actionBuilder(
+                                                                                                                                                new Pose2d(pickupVec,
+                                                                                                                                                                Math.toRadians(-160)))
+                                                                                                                                                .strafeToSplineHeading(
+                                                                                                                                                                new Vector2d(44, 28),
+                                                                                                                                                                SCORE.heading)
+                                                                                                                                                .strafeToSplineHeading(
+                                                                                                                                                                SCORE.pos,
+                                                                                                                                                                SCORE.heading)
+                                                                                                                                                .build(),
                                                                                                                                 new SequentialAction(
                                                                                                                                                 new WaitCommand(ConfigVariables.AutoTesting.K_ROUNDPATHEXITTIME_S)
                                                                                                                                                                 .toAction(),
