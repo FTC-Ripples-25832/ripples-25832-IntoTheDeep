@@ -42,12 +42,13 @@ public class ConfigVariables {
         @Config
         public static class AutoTesting {
                 public static double A_DROPDELAY_S = 0.3;
-                public static double B_AFTERSCOREDELAY_S = 0.2;
+                public static double B_AFTERSCOREDELAY_S = 0.3;
+
                 public static double C_AFTERGRABDELAY_S = 0.1;
                 public static double D_SLIDEPOS0AFTERDELAY_S = 0.1;
                 public static double E_LOWSLIDEUPAFTERDELAY_S = 0.55;
                 public static double F_TRANSFERAFTERDELAY_S = 0.25;
-                public static double G_LOWSLIDETRANSFEROPENCLAWAFTERDELAY_S = 0.1;
+                public static double G_LOWSLIDETRANSFEROPENCLAWAFTERDELAY_S = 0.3;
                 public static double H_TRANSFERCOMPLETEAFTERDELAY_S = 0.2;
                 public static double I_SUBDELAY_S = 0.4;
                 public static double J_AFTERSUBDELAY_S = 0.4;
@@ -85,7 +86,7 @@ public class ConfigVariables {
                 public static double TOLERANCE = 2.5;
                 public static double Y_OFFSET = 0; // cm
                 public static double CAMERA_DELAY = 0.5; // s
-                public static double CLAW_90 = 130;
+                public static double CLAW_90 = 175;
                 public static double XYPIXELRATIO = 225.0 / 672.0;
                 public static double XYDISTANCERATIO = 2.2 / 6.7;
                 public static double CAMERA_DISTANCE = 0; // cm, y distance between camera and sample
@@ -178,45 +179,36 @@ public class ConfigVariables {
                 public static double MAX_VELOCITY_CM_S = 25.0; // cm/s
                 public static double MAX_ACCELERATION_CM_S2 = 40.0; // cm/s²
                 public static double VELOCITY_FEEDFORWARD = 0.02; // kV gain
-                public static double ACCELERATION_FEEDFORWARD = 0.0; // kA gain
-        }
+                public static double AELERATION_FEEDFORWARD = 0.0; // kA gain
+}
 
         // LowerSlide
         @Config
         // @Configurable
         public static class LowerSlideVars {
-                // Arm positions
-                public static double GRAB_BIG = 0.95;
-                public static double GRAB_SMALL = 0.1;
-                public static double UP_BIG = 0.52;
-                public static double UP_SMALL = 1.0;
-                public static double HOVER_BIG = 0.6;
-                public static double HOVER_SMALL = 0.1;
-
-                // slide positions
-                public static double POS_0_CM = 0;
-                public static double POS_1_CM = 14; // inner transfer, if color sensor not detected
-                public static double POS_2_CM = 12;
-
-                // Claw positions
-                public static double CLAW_OPEN = 0.6;
+                public static double ACCELERATION_FEEDFORWARD = 0;
                 public static double CLAW_CLOSE = 0.18;
-
-                public static int POS_GRAB_TIMEOUT = 350;
-                public static int CLAW_CLOSE_TIMEOUT = General.CLAW_OPERATION_TIMEOUT;
-                public static int POS_HOVER_TIMEOUT = 200;
-
-                // spin claw positions angle degrees
-                public static int ZERO = 90;
-                public static int SPINCLAW_DEG = 45;
-                public static double PID_KP = 0.015;
+                public static int CLAW_CLOSE_TIMEOUT = 200;
+                public static double CLAW_OPEN = 0.6;
+                public static double GRAB_BIG = 0.95;
+                public static double GRAB_SMALL = 0;
+                public static double HOVER_BIG = 0.6;
+                public static double HOVER_SMALL = 0;
+                public static double MAX_ACCELERATION_CM_S2 = 50;
+                public static double MAX_VELOCITY_CM_S = 30;
+                public static double PID_KD = 0;
                 public static double PID_KI = 0.005;
-                public static double PID_KD = 0.0;
+                public static double PID_KP = 0.015;
+                public static double POS_0_CM = 0;
+                public static double POS_1_CM = 13;
+                public static double POS_2_CM = 12;
+                public static int POS_GRAB_TIMEOUT = 350;
+                public static int POS_HOVER_TIMEOUT = 200;
+                public static int SPINCLAW_DEG = 80;
+                public static double UP_BIG = 0.52;
+                public static double UP_SMALL = 1;
+                public static double VELOCITY_FEEDFORWARD = 0;
+                public static int ZERO = 90;
 
-                // Motion profiling parameters
-                public static double MAX_VELOCITY_CM_S = 30.0; // cm/s
-                public static double MAX_ACCELERATION_CM_S2 = 50.0; // cm/s²
-                public static double VELOCITY_FEEDFORWARD = 0.0; // kV gain
-                public static double ACCELERATION_FEEDFORWARD = 0.0; // kA gain
         }
 }

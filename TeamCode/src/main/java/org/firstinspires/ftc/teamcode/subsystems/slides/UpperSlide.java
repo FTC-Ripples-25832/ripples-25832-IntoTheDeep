@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 //import com.qualcomm.robotcore.hardware.CurrentUnit;
 
@@ -63,7 +64,7 @@ public class UpperSlide extends SubsystemBase {
                 UpperSlideVars.MAX_VELOCITY_CM_S * COUNTS_PER_CM, // Convert cm/s to ticks/s
                 UpperSlideVars.MAX_ACCELERATION_CM_S2 * COUNTS_PER_CM, // Convert cm/s² to ticks/s²
                 UpperSlideVars.VELOCITY_FEEDFORWARD,
-                UpperSlideVars.ACCELERATION_FEEDFORWARD);
+                UpperSlideVars.AELERATION_FEEDFORWARD);
     }
 
     @Override
