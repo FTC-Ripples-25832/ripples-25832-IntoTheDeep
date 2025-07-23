@@ -55,7 +55,7 @@ public class ConfigVariables {
                 public static double K_ROUNDPATHEXITTIME_S = 1.0;
                 public static double Z_LowerslideExtend_FIRST = 40; // was 20
                 public static double Z_LowerslideExtend_SECOND = 40;
-                public static double Z_LowerslideExtend_THIRD = 28;
+                public static double Z_LowerslideExtend_THIRD = 34;
                 public static double Y_PICKUPDELAY = Camera.CAMERA_DELAY;
                 public static double X_TRANSFERWHILEDRIVEAFTERTRANSFERDELAY_S = 0.1;
                 public static double W_AFTEREXTENDOOPEN_S = 0.2;
@@ -123,7 +123,7 @@ public class ConfigVariables {
                                 127.56
                 };
                 public static String[] ACCEPTED_COLORS = {
-                                "blue", "red", "yellow"
+                                "blue", "rd", "yellow"
                 };
                 public static int ANGLE_MAXNUM = 5;
                 public static int ANGLE_OFFSET = 100;
@@ -142,7 +142,7 @@ public class ConfigVariables {
                 // Arm positions
                 public static double FRONT_ARM_POS = 0.7;
                 public static double FRONT_SWING_POS = 0.65;
-                public static double BEHIND_ARM_POS = 0.3;
+                public static double BEHIND_ARM_POS = 0.27;
                 public static double BEHIND_SWING_POS = 0.0;
                 public static double INTER_ARM_POS = 0.5;
                 public static double INTER_SWING_POS = 0.8;
