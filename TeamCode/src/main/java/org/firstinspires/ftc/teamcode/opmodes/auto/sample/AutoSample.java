@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.slides.LowerSlide;
 import org.firstinspires.ftc.teamcode.subsystems.slides.UpperSlide;
+import org.firstinspires.ftc.teamcode.utils.RobotStateStore;
 import org.firstinspires.ftc.teamcode.utils.control.ConfigVariables;
 import org.firstinspires.ftc.teamcode.utils.hardware.BulkReadManager;
 import org.firstinspires.ftc.teamcode.sensors.limelight.Limelight;
@@ -173,6 +174,8 @@ public final class AutoSample extends LinearOpMode {
         private SequentialAction adjustAndPickupSequence() {
                 return new SequentialAction(
                                 adjustSequence(),
+                                lowerSlideCommands.hover(),
+                                new WaitCommand(ConfigVariables.AutoTesting.Y_PICKUPDELAY).toAction(),
                                 pickupSequence()
                 // waitSeconds(pickupPos.pose, ConfigVariables.AutoTesting.C_AFTERGRABDELAY_S),
                 );
@@ -420,7 +423,7 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                 drive.actionBuilder(
                                                                                                                                                 SCORE.pose)
                                                                                                                                                 .strafeTo(new Vector2d(
-                                                                                                                                                                39,
+                                                                                                                                                                46,
                                                                                                                                                                 28))
                                                                                                                                                 .splineTo(pickupVec,
                                                                                                                                                                 Math.toRadians(-160))
@@ -447,7 +450,7 @@ public final class AutoSample extends LinearOpMode {
                                                                                                                                                 new Pose2d(pickupVec,
                                                                                                                                                                 Math.toRadians(-160)))
                                                                                                                                                 .strafeToSplineHeading(
-                                                                                                                                                                new Vector2d(44, 28),
+                                                                                                                                                                new Vector2d(46, 28),
                                                                                                                                                                 SCORE.heading)
                                                                                                                                                 .strafeToSplineHeading(
                                                                                                                                                                 SCORE.pos,

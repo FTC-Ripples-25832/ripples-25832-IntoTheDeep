@@ -41,7 +41,7 @@ public final class AutoPaths {
         public static final RobotPosition aPICKUP1 = new RobotPosition(56, 52, -110);
         public static final RobotPosition aPICKUP2 = new RobotPosition(58, 55, -90);
         public static final RobotPosition aPICKUP3 = new RobotPosition(54.5, 54.5, -60);
-        public static final RobotPosition aSCORE = new RobotPosition(57, 57, 225);
+        public static final RobotPosition aSCORE = new RobotPosition(60, 60, 225);
 
         // vvvv these mostly arent used rn vvvv
         // Primary autonomous path points

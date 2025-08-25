@@ -53,9 +53,13 @@ public class ConfigVariables {
                 public static double I_SUBDELAY_S = 0.4;
                 public static double J_AFTERSUBDELAY_S = 0.4;
                 public static double K_ROUNDPATHEXITTIME_S = 1.0;
+                public static double L_UPPERSLIDETRANSFERDELAY_S = 1.0;
                 public static double Z_LowerslideExtend_FIRST = 40; // was 20
                 public static double Z_LowerslideExtend_SECOND = 40;
-                public static double Z_LowerslideExtend_THIRD = 28;
+                public static double Z_LowerslideExtend_THIRD = 34;
+                public static double Z_04_LowerslideExtend_FIRST = 20; // was 20
+                public static double Z_04_LowerslideExtend_SECOND = 20;
+                public static double Z_04_LowerslideExtend_THIRD = 20;
                 public static double Y_PICKUPDELAY = Camera.CAMERA_DELAY;
                 public static double X_TRANSFERWHILEDRIVEAFTERTRANSFERDELAY_S = 0.1;
                 public static double W_AFTEREXTENDOOPEN_S = 0.2;
@@ -142,8 +146,8 @@ public class ConfigVariables {
                 // Arm positions
                 public static double FRONT_ARM_POS = 0.7;
                 public static double FRONT_SWING_POS = 0.65;
-                public static double BEHIND_ARM_POS = 0.3;
-                public static double BEHIND_SWING_POS = 0.0;
+                public static double BEHIND_ARM_POS = 0.29;
+                public static double BEHIND_SWING_POS = 0.1;
                 public static double INTER_ARM_POS = 0.5;
                 public static double INTER_SWING_POS = 0.8;
 
@@ -200,15 +204,15 @@ public class ConfigVariables {
                 public static double PID_KI = 0.005;
                 public static double PID_KP = 0.015;
                 public static double POS_0_CM = 0;
-                public static double POS_1_CM = 13;
-                public static double POS_2_CM = 12;
+                public static double POS_1_CM = 10;
+                public static double POS_2_CM = 10;
                 public static int POS_GRAB_TIMEOUT = 350;
-                public static int POS_HOVER_TIMEOUT = 200;
+                public static int POS_HOVER_TIMEOUT = 300;
                 public static int SPINCLAW_DEG = 80;
                 public static double UP_BIG = 0.52;
                 public static double UP_SMALL = 1;
                 public static double VELOCITY_FEEDFORWARD = 0;
-                public static int ZERO = 90;
+                public static int ZERO = 80;
 
         }
 }

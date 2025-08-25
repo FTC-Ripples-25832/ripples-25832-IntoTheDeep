@@ -98,7 +98,8 @@ public class Teleop extends LinearOpMode {
         scheduler.schedule(mecanumDriveCommand);
         // Schedule loop timing telemetry command
         scheduler.schedule(new LoopTimeTelemetryCommand());
-
+        scheduler.schedule(new ActionCommand(lowslideActions.safeFloorToUp()));
+        scheduler.schedule(new ActionCommand(upslideActions.safeBackToFront()));
         if (ConfigVariables.General.WITH_STATESAVE) {
             RobotStateStore.loadSlides(lowSlide, upSlide);
         }
@@ -120,16 +121,6 @@ public class Teleop extends LinearOpMode {
             return;
 
         while (opModeIsActive() && !isStopRequested()) {
-            if(loopCount < 1000){
-                if(gamepad1.a&&gamepad1.b){ // press gamepad1 A if lowarm stuck
-                    scheduler.schedule(new ActionCommand(lowslideActions.safeFloorToUp()));
-                    telemetry.addData("safefloortoup", "added");
-                }
-                if(gamepad2.a&&gamepad2.b){ // press gamepad2 A if uparm stuck
-                    scheduler.schedule(new ActionCommand(upslideActions.safeBackToFront()));
-                    telemetry.addData("safebacktofront", "added");
-                }
-            }
             loopCount += 1;
             long timestamp = System.currentTimeMillis();
             // PERFORMANCE OPTIMIZATION: Update bulk reads once per loop
@@ -222,8 +213,7 @@ public class Teleop extends LinearOpMode {
         gamepad1Controller = new GamepadController(gamepad1);
         gamepad2Controller = new GamepadController(gamepad2);
 
-        scheduler.schedule(new ActionCommand(upslideActions.front()));
-        scheduler.schedule(new ActionCommand(lowslideActions.up()));
+
     }
 
     private void setupGamepadControlsSingle() {

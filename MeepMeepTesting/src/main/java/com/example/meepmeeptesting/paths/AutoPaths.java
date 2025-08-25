@@ -100,7 +100,7 @@ public final class AutoPaths {
 
 
                 //tank path
-                .strafeTo(new Vector2d(39,28))
+                .strafeTo( new Vector2d(46, 28))
                 .splineTo(new Vector2d(30,15), Math.toRadians(-160))
 
 

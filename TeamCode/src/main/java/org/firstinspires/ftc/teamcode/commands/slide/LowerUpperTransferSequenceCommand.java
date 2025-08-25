@@ -35,14 +35,14 @@ public class LowerUpperTransferSequenceCommand extends SequentialCommandGroup {
                         // Step 2: Wait then transfer
                         new WaitCommand(ConfigVariables.AutoTesting.E_LOWSLIDEUPAFTERDELAY_S),
                         // if color sensor not detected, move to pos1(inner)
-                        new ConditionalCommand(
-                                () -> !catched.getAsBoolean(),
-                                new ActionCommand(lowerSlideCommands.slidePos1())
-                        ),
-                        new ConditionalCommand(
-                                () -> !catched.getAsBoolean(),
-                                new WaitCommand(0.3)
-                        ),
+//                        new ConditionalCommand(
+//                                () -> !catched.getAsBoolean(),
+//                                new ActionCommand(lowerSlideCommands.slidePos1())
+//                        ),
+//                        new ConditionalCommand(
+//                                () -> !catched.getAsBoolean(),
+//                                new WaitCommand(0.3)
+//                        ),
                         new ActionCommand(upperSlideCommands.transfer()),
 
                         // Step 3: Wait then closeClaw
